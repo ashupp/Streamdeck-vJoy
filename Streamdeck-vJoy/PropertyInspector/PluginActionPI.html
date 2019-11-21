@@ -12,15 +12,71 @@
 </head>
 <body>
     <div class="sdpi-wrapper">
-        <div class="sdpi-item" id="dvOutputFileName">
+        <div class="sdpi-item" id="vJoyDeviceIdBlock">
             <div class="sdpi-item-label">vJoy Device ID #</div>
             <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyDeviceId" oninput="setSettings()">
         </div>
         
-        <div class="sdpi-item" id="dvOutputFileName">
+        <div class="sdpi-item">
+            <div class="sdpi-item-label">Type of Button / Axis</div>
+            <select class="sdpi-item-value select sdProperty" id="vJoyElementType" oninput="checkShowHide(this);setSettings()" onchange="checkShowHide(this);setSettings()">
+                <optgroup label="Button">
+                    <option value="btn" selected>Button</option>
+                </optgroup>
+                <optgroup label="Axis/Slider">
+                    <option value="ax">X-Axis</option>
+                    <option value="ay">Y-Axis</option>
+                    <option value="az">Z-Axis</option>
+                    <option value="rx">RX-Axis</option>
+                    <option value="ry">RY-Axis</option>
+                    <option value="rz">RZ-Axis</option>
+                    <option value="sl1">Slider</option>
+                    <option value="sl2">Dial/Slider2</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="sdpi-item" id="vJoyButtonIdBlock">
             <div class="sdpi-item-label">vJoy Button Number #</div>
             <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyButtonId" oninput="setSettings()">
         </div>
+        <div type="radio" class="sdpi-item" id="resax">
+            <div class="sdpi-item-label">Axis action after release</div>
+            <div class="sdpi-item-value ">
+                <span class="sdpi-item-child">
+                    <input id="resetToMin" class="sdProperty sdCheckbox" checked type="radio" value="min" name="resax" oninput="setSettings()">
+                    <label for="resetToMin" class="sdpi-item-label"><span></span>to min</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="resetToCenter" class="sdProperty sdCheckbox" type="radio" value="center" name="resax" oninput="setSettings()">
+                    <label for="resetToCenter" class="sdpi-item-label"><span></span>to center</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="resetToMax" class="sdProperty sdCheckbox" type="radio" value="max" name="resax" oninput="setSettings()">
+                    <label for="resetToMax" class="sdpi-item-label"><span></span>to max</label>
+                </span>
+            </div>
+        </div>
+        
+        
+        <div type="radio" class="sdpi-item" id="buttonAction">
+            <div class="sdpi-item-label">Action processing</div>
+            <div class="sdpi-item-value ">
+                <span class="sdpi-item-child">
+                    <input id="triggerPushAndRelease" class="sdProperty sdCheckbox" checked type="radio" value="pushAndRelease" name="buttonAction" oninput="setSettings()">
+                    <label for="triggerPushAndRelease" class="sdpi-item-label"><span></span>Push and Release</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="triggerPush" class="sdProperty sdCheckbox" type="radio" value="push" name="buttonAction" oninput="setSettings()">
+                    <label for="triggerPush" class="sdpi-item-label"><span></span>Only Push</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="triggerRelease" class="sdProperty sdCheckbox" type="radio" value="release" name="buttonAction" oninput="setSettings()">
+                    <label for="triggerRelease" class="sdpi-item-label"><span></span>Only Release</label>
+                </span>
+
+            </div>
+        </div>
+
         <details class="message">
             <summary>Streamdeck-vJoy <span class="linkspan" onclick="openWebsite()">https://github.com/ashupp/Streamdeck-vJoy</span> </summary>
         </details>
