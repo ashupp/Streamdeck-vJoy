@@ -25,6 +25,3 @@ https://github.com/BarRaider/streamdeck-tools
 
 vJoy  
 https://github.com/jshafer817/vJoy
-
-vJoy.Wrapper  
-https://github.com/bobhelander/vJoy.Wrapper
