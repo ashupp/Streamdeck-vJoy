@@ -55,6 +55,17 @@ function websocketOnMessage(evt) {
     }
 }
 
+function checkShowHide() {
+    elem = document.getElementById("vJoyElementType");
+    if (elem.value == "btn") {
+        document.getElementById('resax').style.display = 'none';
+        document.getElementById('vJoyButtonIdBlock').style.display = 'flex';
+    } else {
+        document.getElementById('resax').style.display = 'flex';
+        document.getElementById('vJoyButtonIdBlock').style.display = 'none';
+    }
+}
+
 function loadConfiguration(payload) {
     console.log('loadConfiguration');
     console.log(payload);
@@ -96,6 +107,7 @@ function loadConfiguration(payload) {
             console.log("loadConfiguration failed for key: " + key + " - " + err);
         }
     }
+    checkShowHide();
 }
 
 function setSettings() {

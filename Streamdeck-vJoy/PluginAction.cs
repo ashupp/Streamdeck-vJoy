@@ -3,19 +3,16 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using vJoy.Wrapper;
 
 namespace Streamdeck_vJoy
 {
     [PluginActionId("streamdeck.vjoy.pluginaction")]
     public class PluginAction : PluginBase
     {
-        private VirtualJoystick _virtualJoystick;
-        private Dictionary<Axis, int> _previousValues;
+        static private vJoyInterfaceWrap.vJoy _virtualJoystick = new vJoyInterfaceWrap.vJoy();
+        static private bool _virtualJoystickAcquired = false;
+
 
         private class PluginSettings
         {
@@ -24,8 +21,8 @@ namespace Streamdeck_vJoy
                 Logger.Instance.LogMessage(TracingLevel.INFO, "CreateDefaultSettings started");
                 PluginSettings instance = new PluginSettings();
 
-                instance.vJoyDeviceId = String.Empty;
-                instance.vJoyButtonId = String.Empty;
+                instance.vJoyDeviceId = "";
+                instance.vJoyButtonId = "";
                 instance.vJoyElementType = String.Empty;
                 instance.chkResetAxisToCenterAfterButtonRelease = String.Empty;
                 instance.resetToMin = true;
@@ -38,6 +35,7 @@ namespace Streamdeck_vJoy
                 instance.triggerRelease = true;
                 return instance;
             }
+
 
             [FilenameProperty]
             [JsonProperty(PropertyName = "vJoyDeviceId")]
@@ -73,6 +71,10 @@ namespace Streamdeck_vJoy
 
             [JsonProperty(PropertyName = "triggerRelease")]
             public bool triggerRelease { get; set; }
+
+
+            [JsonProperty(PropertyName = "previousValues")]
+            public Dictionary<HID_USAGES,int> previousValues { get; set; }
         }
 
         #region Private Members
@@ -82,7 +84,6 @@ namespace Streamdeck_vJoy
         #endregion
         public PluginAction(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, "PluginAction constructor");
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
                 this.settings = PluginSettings.CreateDefaultSettings();
@@ -95,179 +96,161 @@ namespace Streamdeck_vJoy
 
         public override void Dispose()
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, $"Destructor called");
-            if (_virtualJoystick != null && _virtualJoystick.Aquired)
-            {
-                _virtualJoystick.Release();
-            }
-            _virtualJoystick.Dispose();
+            if (_virtualJoystickAcquired)
+                _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
+        }
+
+        private int GetJoystickAxisMinValue(HID_USAGES axis)
+        {
+            long MinValue = 0;
+            _virtualJoystick.GetVJDAxisMin(Convert.ToUInt32(settings.vJoyDeviceId), axis, ref MinValue);
+            return (int)MinValue;
+        }
+
+        private int GetJoystickAxisMaxValue(HID_USAGES axis)
+        {
+            long MaxValue = 0;
+            _virtualJoystick.GetVJDAxisMax(Convert.ToUInt32(settings.vJoyDeviceId), axis, ref MaxValue);
+            return (int)MaxValue;
+        }
+
+        private int GetJoystickAxisCenter(HID_USAGES axis)
+        {
+            long MaxValue = 0;
+            _virtualJoystick.GetVJDAxisMax(Convert.ToUInt32(settings.vJoyDeviceId), axis, ref MaxValue);
+            return (int)MaxValue / 2;
         }
 
 
-        private int getAxisValueDependingOnSetting(Axis axis)
+        private int getAxisValueDependingOnSetting(HID_USAGES axis)
         {
             if (settings.resetToMin)
             {
-                return _virtualJoystick.GetJoystickAxisMinValue(axis);
+                return GetJoystickAxisMinValue(axis);
             }
 
             if (settings.resetToCenter)
             {
-                return _virtualJoystick.GetJoystickAxisCenter(axis);
+                return GetJoystickAxisCenter(axis);
             }
 
             if (settings.resetToMax)
             {
-                return _virtualJoystick.GetJoystickAxisMaxValue(axis);
-            }
-
-            if (settings.resetToPrevious)
-            {
-                return _virtualJoystick.GetJoystickAxisValue(axis);
+                return GetJoystickAxisMaxValue(axis);
             }
 
             return 0;
         }
 
-        private void setAxisValue(int axValue, Axis axis)
+        private void setAxisValue(int axValue, HID_USAGES axis)
         {
             if (settings.resetToMin)
             {
-                _previousValues[axis] = _virtualJoystick.GetJoystickAxisMinValue(axis);
+                settings.previousValues[axis] = GetJoystickAxisMaxValue(axis);
             }
 
             if (settings.resetToCenter)
             {
-                _previousValues[axis] = _virtualJoystick.GetJoystickAxisCenter(axis);
+                settings.previousValues[axis] = GetJoystickAxisCenter(axis);
             }
 
             if (settings.resetToMax)
             {
-                _previousValues[axis] = _virtualJoystick.GetJoystickAxisMaxValue(axis);
+                settings.previousValues[axis] = GetJoystickAxisMaxValue(axis);
             }
 
-            if (settings.resetToPrevious)
-            {
-                _previousValues[axis] = _virtualJoystick.GetJoystickAxisValue(axis);
-            }
-
-            _virtualJoystick.SetJoystickAxis(axValue, axis);
+            _virtualJoystick.SetAxis(axValue, Convert.ToUInt32(settings.vJoyDeviceId), axis);
         }
 
         public override void KeyPressed(KeyPayload payload)
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, "Key Pressed");
             if (settings.triggerPush || settings.triggerPushAndRelease)
             {
-                Logger.Instance.LogMessage(TracingLevel.INFO, "triggerPush or triggerPushAndRelease");
-                if (_virtualJoystick == null || !_virtualJoystick.Aquired)
+                if (_virtualJoystick == null || !_virtualJoystickAcquired)
                 {
-                    Logger.Instance.LogMessage(TracingLevel.INFO, "setting virtualjoystick and previousvalues");
-                    _virtualJoystick = new VirtualJoystick(Convert.ToUInt32(settings.vJoyDeviceId));
-                    _virtualJoystick.Aquire();
-                    _previousValues = new Dictionary<Axis, int>();
+                    _virtualJoystick.AcquireVJD(Convert.ToUInt32(settings.vJoyDeviceId));
+                    settings.previousValues = new Dictionary<HID_USAGES, int>();
                 }
 
                 switch (settings.vJoyElementType)
                 {
                     case "ax":
-                        setAxisValue(_virtualJoystick.GetJoystickAxisMaxValue(Axis.HID_USAGE_X), Axis.HID_USAGE_X);
+                        setAxisValue(GetJoystickAxisMaxValue(HID_USAGES.HID_USAGE_X), HID_USAGES.HID_USAGE_X);
                         break;
                     case "ay":
-                        setAxisValue(_virtualJoystick.GetJoystickAxisMaxValue(Axis.HID_USAGE_Y), Axis.HID_USAGE_Y);
+                        setAxisValue(GetJoystickAxisMaxValue(HID_USAGES.HID_USAGE_Y), HID_USAGES.HID_USAGE_Y);
                         break;
                     case "az":
-                        setAxisValue(_virtualJoystick.GetJoystickAxisMaxValue(Axis.HID_USAGE_Z), Axis.HID_USAGE_Z);
+                        setAxisValue(GetJoystickAxisMaxValue(HID_USAGES.HID_USAGE_Z), HID_USAGES.HID_USAGE_Z);
                         break;
                     case "rx":
-                        setAxisValue(_virtualJoystick.GetJoystickAxisMaxValue(Axis.HID_USAGE_RX), Axis.HID_USAGE_RX);
+                        setAxisValue(GetJoystickAxisMaxValue(HID_USAGES.HID_USAGE_RX), HID_USAGES.HID_USAGE_RX);
                         break;
                     case "ry":
-                        setAxisValue(_virtualJoystick.GetJoystickAxisMaxValue(Axis.HID_USAGE_RY), Axis.HID_USAGE_RY);
+                        setAxisValue(GetJoystickAxisMaxValue(HID_USAGES.HID_USAGE_RY), HID_USAGES.HID_USAGE_RY);
                         break;
                     case "rz":
-                        setAxisValue(_virtualJoystick.GetJoystickAxisMaxValue(Axis.HID_USAGE_RZ), Axis.HID_USAGE_RZ);
+                        setAxisValue(GetJoystickAxisMaxValue(HID_USAGES.HID_USAGE_RZ), HID_USAGES.HID_USAGE_RZ);
                         break;
                     case "sl1":
-                        setAxisValue(_virtualJoystick.GetJoystickAxisMaxValue(Axis.HID_USAGE_SL0), Axis.HID_USAGE_SL0);
+                        setAxisValue(GetJoystickAxisMaxValue(HID_USAGES.HID_USAGE_SL0), HID_USAGES.HID_USAGE_SL0);
                         break;
                     case "sl2":
-                        setAxisValue(_virtualJoystick.GetJoystickAxisMaxValue(Axis.HID_USAGE_SL1), Axis.HID_USAGE_SL1);
+                        setAxisValue(GetJoystickAxisMaxValue(HID_USAGES.HID_USAGE_SL1), HID_USAGES.HID_USAGE_SL1);
                         break;
                     case "btn":
                     default:
-                        _virtualJoystick.SetJoystickButton(true, Convert.ToUInt32(settings.vJoyButtonId));
+                        _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
                         break;
                 }
             }
-            _virtualJoystick?.Release();
+            _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
+            
         }
 
         public override void KeyReleased(KeyPayload payload)
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, "Key released");
             if (settings.triggerPushAndRelease || settings.triggerRelease)
             {
-                Logger.Instance.LogMessage(TracingLevel.INFO, "triggerRelease or triggerPushAndRelease");
-                if (_virtualJoystick == null || !_virtualJoystick.Aquired)
+                if (_virtualJoystick == null || !_virtualJoystickAcquired)
                 {
-                    Logger.Instance.LogMessage(TracingLevel.INFO, "setting virtualjoystick and previousvalues");
-                    _virtualJoystick = new VirtualJoystick(Convert.ToUInt32(settings.vJoyDeviceId));
-                    _virtualJoystick.Aquire();
-                    _previousValues = new Dictionary<Axis, int>();
+                    _virtualJoystick.AcquireVJD(Convert.ToUInt32(settings.vJoyDeviceId));
+                    settings.previousValues = new Dictionary<HID_USAGES, int>();
                 }
 
                 switch (settings.vJoyElementType)
                 {
                     case "ax":
-                        if (_previousValues != null && _previousValues.ContainsKey(Axis.HID_USAGE_X))
-                        {
-                            Logger.Instance.LogMessage(TracingLevel.INFO, "X release value vorhanden");
-                            setAxisValue(_previousValues[Axis.HID_USAGE_X], Axis.HID_USAGE_X);
-                        }
-                        else
-                        {
-                            Logger.Instance.LogMessage(TracingLevel.INFO, "X release ELSE");
-                            setAxisValue(getAxisValueDependingOnSetting(Axis.HID_USAGE_X), Axis.HID_USAGE_X);
-                        }
-                            
-                        break;
+                        setAxisValue(getAxisValueDependingOnSetting(HID_USAGES.HID_USAGE_X), HID_USAGES.HID_USAGE_X);
+                            break;
                     case "ay":
-                        if (_previousValues != null && _previousValues[Axis.HID_USAGE_Y] != null)
-                        {
-                            setAxisValue(_previousValues[Axis.HID_USAGE_Y], Axis.HID_USAGE_Y);
-                        }
-                        else
-                        {
-                            setAxisValue(getAxisValueDependingOnSetting(Axis.HID_USAGE_Y), Axis.HID_USAGE_Y);
-                        }
-                            
+                        setAxisValue(getAxisValueDependingOnSetting(HID_USAGES.HID_USAGE_Y), HID_USAGES.HID_USAGE_Y);
                         break;
                     case "az":
-                        setAxisValue(_previousValues[Axis.HID_USAGE_Z], Axis.HID_USAGE_Z);
+                        setAxisValue(getAxisValueDependingOnSetting(HID_USAGES.HID_USAGE_Z), HID_USAGES.HID_USAGE_Z);
                         break;
                     case "rx":
-                        setAxisValue(_previousValues[Axis.HID_USAGE_RX], Axis.HID_USAGE_RX);
+                        setAxisValue(getAxisValueDependingOnSetting(HID_USAGES.HID_USAGE_RX), HID_USAGES.HID_USAGE_RX);
                         break;
                     case "ry":
-                        setAxisValue(_previousValues[Axis.HID_USAGE_RY], Axis.HID_USAGE_RY);
+                        setAxisValue(getAxisValueDependingOnSetting(HID_USAGES.HID_USAGE_RY), HID_USAGES.HID_USAGE_RY);
                         break;
                     case "rz":
-                        setAxisValue(_previousValues[Axis.HID_USAGE_RZ], Axis.HID_USAGE_RZ);
+                        setAxisValue(getAxisValueDependingOnSetting(HID_USAGES.HID_USAGE_RZ), HID_USAGES.HID_USAGE_RZ);
                         break;
                     case "sl1":
-                        setAxisValue(_previousValues[Axis.HID_USAGE_SL0], Axis.HID_USAGE_SL0);
+                        setAxisValue(getAxisValueDependingOnSetting(HID_USAGES.HID_USAGE_SL0), HID_USAGES.HID_USAGE_SL0);
                         break;
                     case "sl2":
-                        setAxisValue(_previousValues[Axis.HID_USAGE_SL1], Axis.HID_USAGE_SL1);
+                        setAxisValue(getAxisValueDependingOnSetting(HID_USAGES.HID_USAGE_SL1), HID_USAGES.HID_USAGE_SL1);
                         break;
                     case "btn":
                     default:
-                        _virtualJoystick.SetJoystickButton(false, Convert.ToUInt32(settings.vJoyButtonId));
+                        _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
                         break;
                 }
             }
-            _virtualJoystick?.Release();
+            _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
         }
 
         public override void OnTick()
@@ -276,21 +259,18 @@ namespace Streamdeck_vJoy
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, "ReceivedSettings");
             Tools.AutoPopulateSettings(settings, payload.Settings);
             SaveSettings();
         }
 
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload)
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, "ReceivedGlobalSettings");
         }
 
         #region Private Methods
 
         private Task SaveSettings()
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, "SaveSettings");
             return Connection.SetSettingsAsync(JObject.FromObject(settings));
         }
 
