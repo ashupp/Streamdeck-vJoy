@@ -16,7 +16,7 @@
             <div class="sdpi-item-label">vJoy Device ID #</div>
             <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyDeviceId" oninput="setSettings()">
         </div>
-        
+
         <div class="sdpi-item">
             <div class="sdpi-item-label">Type of Button / Axis</div>
             <select class="sdpi-item-value select sdProperty" id="vJoyElementType" oninput="checkShowHide(this);setSettings()" onchange="checkShowHide(this);setSettings()">
@@ -39,6 +39,54 @@
             <div class="sdpi-item-label">vJoy Button Number #</div>
             <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyButtonId" oninput="setSettings()">
         </div>
+        <hr>
+
+        <div>
+            <div type="radio" class="sdpi-item" id="setax">
+                <div class="sdpi-item-label">Axis action on push</div>
+                <div class="sdpi-item-value ">
+                    <span class="sdpi-item-child">
+                        <input id="setToMin" class="sdProperty sdCheckbox" checked type="radio" value="min" name="setax" oninput="setSettings()">
+                        <label for="setToMin" class="sdpi-item-label"><span></span>to min</label>
+                    </span>
+                    <span class="sdpi-item-child">
+                        <input id="setToCenter" class="sdProperty sdCheckbox" type="radio" value="center" name="setax" oninput="setSettings()">
+                        <label for="setToCenter" class="sdpi-item-label"><span></span>to center</label>
+                    </span>
+                    <span class="sdpi-item-child">
+                        <input id="setToMax" class="sdProperty sdCheckbox" checked type="radio" value="max" name="setax" oninput="setSettings()">
+                        <label for="setToMax" class="sdpi-item-label"><span></span>to max</label>
+                    </span>
+                    <span class="sdpi-item-child">
+                        <input id="setToStepUp" class="sdProperty sdCheckbox" type="radio" value="stepUp" name="setax" oninput="setSettings()">
+                        <label for="setToStepUp" class="sdpi-item-label"><span></span>step up</label>
+                    </span>
+                    <span class="sdpi-item-child">
+                        <input id="setToStepDown" class="sdProperty sdCheckbox" type="radio" value="stepDown" name="setax" oninput="setSettings()">
+                        <label for="setToStepDown" class="sdpi-item-label"><span></span>step down</label>
+                    </span>
+                    <span class="sdpi-item-child">
+                        <input id="setToCustom" class="sdProperty sdCheckbox" type="radio" value="resetCustom" name="setax" oninput="setSettings()">
+                        <label for="setToCustom" class="sdpi-item-label"><span></span>to custom value</label>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="sdpi-item" id="setStepUpBlock">
+            <div class="sdpi-item-label">Step up by value</div>
+            <input class="sdpi-item-value sdProperty" placeholder="0-65535" value="" id="setStepUp" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="setStepDownBlock">
+            <div class="sdpi-item-label">Step down by value</div>
+            <input class="sdpi-item-value sdProperty" placeholder="0-65535" value="" id="setStepDown" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="setToCustomValueBlock">
+            <div class="sdpi-item-label">Custom value</div>
+            <input class="sdpi-item-value sdProperty" placeholder="0-65535" value="" id="setToCustomValue" oninput="setSettings()">
+        </div>
+        <hr id="setax_line">
+
+
         <div type="radio" class="sdpi-item" id="resax">
             <div class="sdpi-item-label">Axis action after release</div>
             <div class="sdpi-item-value ">
@@ -54,24 +102,53 @@
                     <input id="resetToMax" class="sdProperty sdCheckbox" type="radio" value="max" name="resax" oninput="setSettings()">
                     <label for="resetToMax" class="sdpi-item-label"><span></span>to max</label>
                 </span>
+                <span class="sdpi-item-child">
+                    <input id="resetToStepUp" class="sdProperty sdCheckbox" type="radio" value="stepUp" name="resax" oninput="setSettings()">
+                    <label for="resetToStepUp" class="sdpi-item-label"><span></span>step up</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="resetToStepDown" class="sdProperty sdCheckbox" type="radio" value="stepDown" name="resax" oninput="setSettings()">
+                    <label for="resetToStepDown" class="sdpi-item-label"><span></span>step down</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="resetToCustom" class="sdProperty sdCheckbox" type="radio" value="resetCustom" name="resax" oninput="setSettings()">
+                    <label for="resetToCustom" class="sdpi-item-label"><span></span>to custom value</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="resetDoNothing" class="sdProperty sdCheckbox" type="radio" value="resetNothing" name="resax" oninput="setSettings()">
+                    <label for="resetDoNothing" class="sdpi-item-label"><span></span>do nothing</label>
+                </span>
             </div>
         </div>
-        
-        
+        <div class="sdpi-item" id="resetStepUpBlock">
+            <div class="sdpi-item-label">Step up by value r</div>
+            <input class="sdpi-item-value sdProperty" placeholder="0-65535" value="" id="resetStepUp" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="resetStepDownBlock">
+            <div class="sdpi-item-label">Step down by value r</div>
+            <input class="sdpi-item-value sdProperty" placeholder="0-65535" value="" id="resetStepDown" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="resetToCustomValueBlock">
+            <div class="sdpi-item-label">Custom value r</div>
+            <input class="sdpi-item-value sdProperty" placeholder="0-65535" value="" id="resetToCustomValue" oninput="setSettings()">
+        </div>
+        <hr id="resax_line">
+
+
         <div type="radio" class="sdpi-item" id="buttonAction">
             <div class="sdpi-item-label">Action processing</div>
             <div class="sdpi-item-value ">
                 <span class="sdpi-item-child">
-                    <input id="triggerPushAndRelease" class="sdProperty sdCheckbox" checked type="radio" value="pushAndRelease" name="buttonAction" oninput="setSettings()">
+                    <input id="triggerPushAndRelease" class="sdProperty sdCheckbox" checked type="radio" value="pushAndRelease" name="buttonAction" oninput="checkShowHide(this); setSettings()">
                     <label for="triggerPushAndRelease" class="sdpi-item-label"><span></span>Push and Release</label>
                 </span>
                 <span class="sdpi-item-child">
                     <input id="triggerPush" class="sdProperty sdCheckbox" type="radio" value="push" name="buttonAction" oninput="setSettings()">
-                    <label for="triggerPush" class="sdpi-item-label"><span></span>Only Push</label>
+                    <label for="triggerPush" class="sdpi-item-label"><span></span>Push and hold</label>
                 </span>
                 <span class="sdpi-item-child">
                     <input id="triggerRelease" class="sdProperty sdCheckbox" type="radio" value="release" name="buttonAction" oninput="setSettings()">
-                    <label for="triggerRelease" class="sdpi-item-label"><span></span>Only Release</label>
+                    <label for="triggerRelease" class="sdpi-item-label"><span></span>Release</label>
                 </span>
 
             </div>
