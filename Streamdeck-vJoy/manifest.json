@@ -21,7 +21,7 @@
   "Description": "Map deck buttons to vJoy buttons",
   "Icon": "Images/pluginIcon",
   "URL": "https://github.com/ashupp/Streamdeck-vJoy",
-  "Version": "0.0.1.2",
+  "Version": "0.0.1.3",
   "CodePath": "com.streamdeck.vjoy",
   "Category": "vJoy",
   "CategoryIcon": "Images/categoryIcon",

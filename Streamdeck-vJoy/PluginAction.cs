@@ -374,7 +374,7 @@ namespace Streamdeck_vJoy
                     }
                     else if (settings.resetToStepDown)
                     {
-                        axisValue = stepUpAxisValue(theAxis, settings.resetStepDown);
+                        axisValue = stepDownAxisValue(theAxis, settings.resetStepDown);
                     }
 
                     setAxisValue(axisValue, theAxis);
