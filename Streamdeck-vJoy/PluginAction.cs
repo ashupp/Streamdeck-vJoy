@@ -343,7 +343,7 @@ namespace Streamdeck_vJoy
                 if (settings.vJoyElementType == "btn")
                 {
                     // Es ist ein Button
-                    _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
+                    _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
                 }
                 else
                 {
