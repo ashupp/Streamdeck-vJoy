@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Streamdeck_vJoy
 {
-    [PluginActionId("streamdeck.vjoy.vjoybutton")]
+    [PluginActionId("com.streamdeck.vjoy.vjoybutton")]
     public class vJoyButton : PluginBase
     {
         static private vJoyInterfaceWrap.vJoy _virtualJoystick = new vJoyInterfaceWrap.vJoy();

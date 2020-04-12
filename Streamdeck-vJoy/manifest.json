@@ -12,7 +12,7 @@
       ],
       "SupportedInMultiActions": true,
       "Tooltip": "Map stream deck buttons to vJoy buttons",
-      "UUID": "streamdeck.vjoy.vjoybutton",
+      "UUID": "com.streamdeck.vjoy.vjoybutton",
       "PropertyInspectorPath": "PropertyInspector/vJoyButton/vJoyButton.html"
     },
     {
@@ -20,23 +20,24 @@
       "Name": "vJoy Button Toggle",
       "States": [
         {
-          "Name": "On",
-          "Title": "On",
+          "Name": "Off",
+          "Title": "Off",
           "Image": "Images/pluginAction",
           "TitleAlignment": "middle",
           "FontSize": "12"
         },
         {
-          "Name": "Off",
-          "Title":  "Off", 
+          "Name": "On",
+          "Title": "On",
           "Image": "Images/pluginAction",
           "TitleAlignment": "middle",
           "FontSize": "12"
         }
+
       ],
       "SupportedInMultiActions": true,
       "Tooltip": "Map stream deck buttons to vJoy buttons",
-      "UUID": "streamdeck.vjoy.buttontoggle",
+      "UUID": "com.streamdeck.vjoy.buttontoggle",
       "PropertyInspectorPath": "PropertyInspector/ButtonToggle/ButtonToggle.html"
     }
   ],
@@ -45,7 +46,7 @@
   "Description": "Map deck buttons to vJoy buttons",
   "Icon": "Images/pluginIcon",
   "URL": "https://github.com/ashupp/Streamdeck-vJoy",
-  "Version": "0.0.1.7",
+  "Version": "0.0.1.6",
   "CodePath": "com.streamdeck.vjoy",
   "Category": "vJoy",
   "CategoryIcon": "Images/categoryIcon",

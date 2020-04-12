@@ -1,81 +1,119 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using BarRaider.SdTools;
+﻿using BarRaider.SdTools;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace Streamdeck_vJoy.PluginActions
 {
-    [PluginActionId("streamdeck.vjoy.buttontoggle")]
+    [PluginActionId("com.streamdeck.vjoy.buttontoggle")]
     class ButtonToggle : PluginBase
     {
-        static private vJoyInterfaceWrap.vJoy _virtualJoystick = new vJoyInterfaceWrap.vJoy();
-        static private bool _virtualJoystickAcquired = false;
-        public static int xAxisVal = 0;
-        public static Dictionary<HID_USAGES, int> axisValues = new Dictionary<HID_USAGES, int>();
-        public bool buttonPressed = false;
+        #region Private Members
+        private PluginSettings settings;
+        private static readonly vJoyInterfaceWrap.vJoy _virtualJoystick = new vJoyInterfaceWrap.vJoy();
+        private static bool _virtualJoystickAcquired;
+        public bool ButtonIsCurrentlyPressed;
+        public bool LockedForInput;
+        #endregion
 
-
+        #region PluginSettings
         private class PluginSettings
         {
-            public static ButtonToggle.PluginSettings CreateDefaultSettings()
+            public static PluginSettings CreateDefaultSettings()
             {
-                Logger.Instance.LogMessage(TracingLevel.INFO, "CreateDefaultSettings started");
-                ButtonToggle.PluginSettings instance = new ButtonToggle.PluginSettings();
-
+                PluginSettings instance = new PluginSettings();
+                Logger.Instance.LogMessage(TracingLevel.INFO, "CreateDefaultSettings ButtonToggle started");
                 instance.vJoyDeviceId = "";
                 instance.vJoyButtonId = "";
-                instance.triggerToggle = true;
+                instance.buttonProcessingOnPush = false;
+                instance.buttonProcessingAfterReleased = true;
 
                 return instance;
             }
 
-            [FilenameProperty]
             [JsonProperty(PropertyName = "vJoyDeviceId")]
             public string vJoyDeviceId { get; set; }
 
             [JsonProperty(PropertyName = "vJoyButtonId")]
             public string vJoyButtonId { get; set; }
 
+            [JsonProperty(PropertyName = "buttonProcessingOnPush")]
+            public bool buttonProcessingOnPush { get; set; }
 
-            [JsonProperty(PropertyName = "triggerToggle")]
-            public bool triggerToggle { get; set; }
+            [JsonProperty(PropertyName = "buttonProcessingAfterReleased")]
+            public bool buttonProcessingAfterReleased { get; set; }
 
         }
-
-        #region Private Members
-
-        private ButtonToggle.PluginSettings settings;
-
         #endregion
+
+
+        private void EnsureAcquireJoystick()
+        {
+            if (settings.vJoyDeviceId != "")
+            {
+                 _virtualJoystick.AcquireVJD(Convert.ToUInt32(settings.vJoyDeviceId));
+            }
+        }
+
+        private void ReleaseJoystick()
+        {
+            if (settings.vJoyDeviceId != "")
+            {
+                _virtualJoystick.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
+            }
+        }
+
+        private void ToggleJoystickButton()
+        {
+            EnsureAcquireJoystick();
+            if (ButtonIsCurrentlyPressed)
+            {
+                if (_virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId)))
+                {
+                    Connection.SetStateAsync(0);
+                    ButtonIsCurrentlyPressed = false;
+                }
+            }
+            else
+            {
+                if (_virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId)))
+                {
+                    ButtonIsCurrentlyPressed = true;
+                    Connection.SetStateAsync(1);
+                }
+            }
+        }
 
         public ButtonToggle(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
+            if (payload.Settings == null || payload.Settings.Count == 0)
+            {
+                settings = PluginSettings.CreateDefaultSettings();
+            }
+            else
+            {
+                settings = payload.Settings.ToObject<PluginSettings>();
+            }
         }
+
 
         public override void KeyPressed(KeyPayload payload)
         {
-            if (_virtualJoystick == null || !_virtualJoystickAcquired)
+            if (!LockedForInput && settings.buttonProcessingOnPush)
             {
-                _virtualJoystick.AcquireVJD(Convert.ToUInt32(settings.vJoyDeviceId));
+                LockedForInput = true;
+                ToggleJoystickButton();
             }
-
-            // Es ist ein Button
-            if (buttonPressed)
-            {
-                _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
-                buttonPressed = false;
-                return;
-            }
-
-            buttonPressed = true;
-            _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
         }
 
         public override void KeyReleased(KeyPayload payload)
         {
-            //throw new NotImplementedException();
+            if (settings.buttonProcessingAfterReleased)
+            {
+                ToggleJoystickButton();
+            }
+            LockedForInput = false;
+            ReleaseJoystick();
         }
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
@@ -84,24 +122,18 @@ namespace Streamdeck_vJoy.PluginActions
             SaveSettings();
         }
 
-        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload)
-        {
-            //throw new NotImplementedException();
-        }
+        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) { }
 
-        public override void OnTick()
-        {
-            //throw new NotImplementedException();
-        }
+        public override void OnTick() { }
 
         public override void Dispose()
         {
-            //throw new NotImplementedException();
+            ReleaseJoystick();
         }
 
-        private Task SaveSettings()
+        private void SaveSettings()
         {
-            return Connection.SetSettingsAsync(JObject.FromObject(settings));
+            Connection.SetSettingsAsync(JObject.FromObject(settings));
         }
     }
 }

@@ -143,3 +143,4 @@ function checkShowHide() {
         }
     }
 }
+checkShowHide();
