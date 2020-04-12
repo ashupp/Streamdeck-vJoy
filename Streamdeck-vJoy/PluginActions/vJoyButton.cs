@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Streamdeck_vJoy
 {
-    [PluginActionId("streamdeck.vjoy.pluginaction")]
-    public class PluginAction : PluginBase
+    [PluginActionId("streamdeck.vjoy.vjoybutton")]
+    public class vJoyButton : PluginBase
     {
         static private vJoyInterfaceWrap.vJoy _virtualJoystick = new vJoyInterfaceWrap.vJoy();
         static private bool _virtualJoystickAcquired = false;
@@ -50,7 +50,7 @@ namespace Streamdeck_vJoy
                 instance.resetStepDown = "";
                 instance.resetDoNothing = false;
 
-
+                    
                 instance.triggerPushAndRelease = true;
                 instance.triggerPush = true;
                 instance.triggerRelease = true;
@@ -144,7 +144,7 @@ namespace Streamdeck_vJoy
         private PluginSettings settings;
 
         #endregion
-        public PluginAction(SDConnection connection, InitialPayload payload) : base(connection, payload)
+        public vJoyButton(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
