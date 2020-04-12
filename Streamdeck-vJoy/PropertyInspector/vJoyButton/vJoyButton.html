@@ -6,9 +6,9 @@
     <meta name=apple-mobile-web-app-capable content=yes>
     <meta name=apple-mobile-web-app-status-bar-style content=black>
     <title>Streamdeck_vJoy Settings</title>
-    <link rel="stylesheet" href="sdpi.css">
-    <script src="sdtools.common.js"></script>
-    <script src="PluginActionPI.js"></script>
+    <link rel="stylesheet" href="../sdpi.css">
+    <script src="../sdtools.common.js"></script>
+    <script src="vJoyButton.js"></script>
 </head>
 <body>
     <div class="sdpi-wrapper">
@@ -40,6 +40,26 @@
             <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyButtonId" oninput="setSettings()">
         </div>
         <hr>
+        
+        
+        <div type="radio" class="sdpi-item" id="buttonAction">
+            <div class="sdpi-item-label">Action processing</div>
+            <div class="sdpi-item-value ">
+                <span class="sdpi-item-child">
+                    <input id="triggerPushAndRelease" class="sdProperty sdCheckbox" checked type="radio" value="pushAndRelease" name="buttonAction" oninput="checkShowHide(this); setSettings()">
+                    <label for="triggerPushAndRelease" class="sdpi-item-label"><span></span>Push and Release</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="triggerPush" class="sdProperty sdCheckbox" type="radio" value="push" name="buttonAction" oninput="setSettings()">
+                    <label for="triggerPush" class="sdpi-item-label"><span></span>Push and hold</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="triggerRelease" class="sdProperty sdCheckbox" type="radio" value="release" name="buttonAction" oninput="setSettings()">
+                    <label for="triggerRelease" class="sdpi-item-label"><span></span>Release</label>
+                </span>
+            </div>
+        </div>
+        <hr/>
 
         <div>
             <div type="radio" class="sdpi-item" id="setax">
@@ -135,27 +155,8 @@
         <hr id="resax_line">
 
 
-        <div type="radio" class="sdpi-item" id="buttonAction">
-            <div class="sdpi-item-label">Action processing</div>
-            <div class="sdpi-item-value ">
-                <span class="sdpi-item-child">
-                    <input id="triggerPushAndRelease" class="sdProperty sdCheckbox" checked type="radio" value="pushAndRelease" name="buttonAction" oninput="checkShowHide(this); setSettings()">
-                    <label for="triggerPushAndRelease" class="sdpi-item-label"><span></span>Push and Release</label>
-                </span>
-                <span class="sdpi-item-child">
-                    <input id="triggerPush" class="sdProperty sdCheckbox" type="radio" value="push" name="buttonAction" oninput="setSettings()">
-                    <label for="triggerPush" class="sdpi-item-label"><span></span>Push and hold</label>
-                </span>
-                <span class="sdpi-item-child">
-                    <input id="triggerRelease" class="sdProperty sdCheckbox" type="radio" value="release" name="buttonAction" oninput="setSettings()">
-                    <label for="triggerRelease" class="sdpi-item-label"><span></span>Release</label>
-                </span>
-
-            </div>
-        </div>
-
         <details class="message">
-            <summary>Streamdeck-vJoy <span class="linkspan" onclick="openWebsite()">https://github.com/ashupp/Streamdeck-vJoy</span> </summary>
+            <summary>Streamdeck-vJoy <span class="linkspan" onclick="openWebsite('https://github.com/ashupp/Streamdeck-vJoy')">https://github.com/ashupp/Streamdeck-vJoy</span> </summary>
         </details>
     </div>
 </body>

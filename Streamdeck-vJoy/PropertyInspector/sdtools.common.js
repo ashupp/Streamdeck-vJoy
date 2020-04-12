@@ -1,4 +1,4 @@
-﻿// sdtools.common.js v1.0
+﻿// sdtools.common.js v1.2
 var websocket = null,
     uuid = null,
     registerEventName = null,
@@ -55,132 +55,6 @@ function websocketOnMessage(evt) {
     }
 }
 
-function checkShowHide() {
-    elem = document.getElementById("vJoyElementType");
-
-    document.getElementById('resax').style.display = 'none';
-    document.getElementById('resax_line').style.display = 'none';
-    document.getElementById('setax').style.display = 'none';
-    document.getElementById('setax_line').style.display = 'none';
-    document.getElementById('vJoyButtonIdBlock').style.display = 'none';
-    document.getElementById('setToCustomValueBlock').style.display = 'none';
-    document.getElementById('setStepUpBlock').style.display = 'none';
-    document.getElementById('setStepDownBlock').style.display = 'none';
-    document.getElementById('resetToCustomValueBlock').style.display = 'none';
-    document.getElementById('resetStepUpBlock').style.display = 'none';
-    document.getElementById('resetStepDownBlock').style.display = 'none';
-    document.getElementById('vJoyButtonIdBlock').style.display = 'none';
-
-
-    if (elem.value == "btn") {
-        document.getElementById('vJoyButtonIdBlock').style.display = 'flex';
-    } else {
-        
-        // TODO: Double if queries depending on button action.. must be made much simpler
-
-        // Only Push
-        if (document.getElementById('triggerPush').checked) {
-            document.getElementById('setax').style.display = 'flex';
-            document.getElementById('setax_line').style.display = 'block';
-
-
-
-            // Set to Step Up marked
-            if (document.getElementById('setToStepUp').checked) {
-                document.getElementById('setStepUpBlock').style.display = 'flex';
-            }
-
-
-            // Set to Step Down marked
-            if (document.getElementById('setToStepDown').checked) {
-                document.getElementById('setStepDownBlock').style.display = 'flex';
-            }
-
-            // Set to Custom marked
-            if (document.getElementById('setToCustom').checked) {
-                document.getElementById('setToCustomValueBlock').style.display = 'flex';
-            }
-
-
-
-        }
-
-
-        // Only Release
-        if (document.getElementById('triggerRelease').checked) {
-            document.getElementById('resax').style.display = 'flex';
-            document.getElementById('resax_line').style.display = 'block';
-
-
-            // Reset to Step Up marked
-            if (document.getElementById('resetToStepUp').checked) {
-                document.getElementById('resetStepUpBlock').style.display = 'flex';
-            }
-
-            // Reset to Step Down marked
-            if (document.getElementById('resetToStepDown').checked) {
-                document.getElementById('resetStepDownBlock').style.display = 'flex';
-            }
-
-            // Reset to Custom marked
-            if (document.getElementById('resetToCustom').checked) {
-                document.getElementById('resetToCustomValueBlock').style.display = 'flex';
-            }
-        }
-
-
-        // Push and release 
-        if (document.getElementById('triggerPushAndRelease').checked) {
-            document.getElementById('setax').style.display = 'flex';
-            document.getElementById('setax_line').style.display = 'block';
-            document.getElementById('resax').style.display = 'flex';
-            document.getElementById('resax_line').style.display = 'block';
-
-
-
-
-            // Set to Step Up marked
-            if (document.getElementById('setToStepUp').checked) {
-                document.getElementById('setStepUpBlock').style.display = 'flex';
-            }
-
-
-            // Set to Step Down marked
-            if (document.getElementById('setToStepDown').checked) {
-                document.getElementById('setStepDownBlock').style.display = 'flex';
-            }
-
-            // Set to Custom marked
-            if (document.getElementById('setToCustom').checked) {
-                document.getElementById('setToCustomValueBlock').style.display = 'flex';
-            }
-
-            // Reset to Step Up marked
-            if (document.getElementById('resetToStepUp').checked) {
-                document.getElementById('resetStepUpBlock').style.display = 'flex';
-            }
-
-            // Reset to Step Down marked
-            if (document.getElementById('resetToStepDown').checked) {
-                document.getElementById('resetStepDownBlock').style.display = 'flex';
-            }
-
-            // Reset to Custom marked
-            if (document.getElementById('resetToCustom').checked) {
-                document.getElementById('resetToCustomValueBlock').style.display = 'flex';
-            }
-
-        }
-
-
-
-
-
-
-
-    }
-}
-
 function loadConfiguration(payload) {
     console.log('loadConfiguration');
     console.log(payload);
@@ -213,6 +87,9 @@ function loadConfiguration(payload) {
                 }
                 elem.value = payload[valueField];
             }
+            else if (elem.classList.contains("sdHTML")) { // HTML element
+                elem.innerHTML = payload[key];
+            }
             else { // Normal value
                 elem.value = payload[key];
             }
@@ -222,7 +99,6 @@ function loadConfiguration(payload) {
             console.log("loadConfiguration failed for key: " + key + " - " + err);
         }
     }
-    checkShowHide();
 }
 
 function setSettings() {
@@ -249,6 +125,10 @@ function setSettings() {
         else if (elem.classList.contains("sdList")) { // Dynamic dropdown
             var valueField = elem.getAttribute("sdValueField");
             payload[valueField] = elem.value;
+        }
+        else if (elem.classList.contains("sdHTML")) { // HTML element
+            var valueField = elem.getAttribute("sdValueField");
+            payload[valueField] = elem.innerHTML;
         }
         else { // Normal value
             payload[key] = elem.value;
@@ -299,12 +179,12 @@ function sendValueToPlugin(value, param) {
     }
 }
 
-function openWebsite() {
+function openWebsite(url) {
     if (websocket && (websocket.readyState === 1)) {
         const json = {
             'event': 'openUrl',
             'payload': {
-                'url': 'https://BarRaider.github.io'
+                'url': url
             }
         };
         websocket.send(JSON.stringify(json));
@@ -341,24 +221,20 @@ function addDynamicStyles(clrs) {
 
     node.setAttribute('id', 'sdpi-dynamic-styles');
     node.innerHTML = `
-
     input[type="radio"]:checked + label span,
     input[type="checkbox"]:checked + label span {
         background-color: ${clrs.highlightColor};
     }
-
     input[type="radio"]:active:checked + label span,
     input[type="radio"]:active + label span,
     input[type="checkbox"]:active:checked + label span,
     input[type="checkbox"]:active + label span {
       background-color: ${clrs.mouseDownColor};
     }
-
     input[type="radio"]:active + label span,
     input[type="checkbox"]:active + label span {
       background-color: ${clrs.buttonPressedBorderColor};
     }
-
     td.selected,
     td.selected:hover,
     li.selected:hover,
@@ -366,7 +242,6 @@ function addDynamicStyles(clrs) {
       color: white;
       background-color: ${clrs.highlightColor};
     }
-
     .sdpi-file-label > label:active,
     .sdpi-file-label.file:active,
     label.sdpi-file-label:active,
@@ -377,12 +252,10 @@ function addDynamicStyles(clrs) {
       color: ${clrs.buttonPressedTextColor};
       border-color: ${clrs.buttonPressedBorderColor};
     }
-
     ::-webkit-progress-value,
     meter::-webkit-meter-optimum-value {
         background: linear-gradient(${clr2}, ${clr1} 20%, ${clr} 45%, ${clr} 55%, ${clr2})
     }
-
     ::-webkit-progress-value:active,
     meter::-webkit-meter-optimum-value:active {
         background: linear-gradient(${clr}, ${clr2} 20%, ${metersActiveColor} 45%, ${metersActiveColor} 55%, ${clr})

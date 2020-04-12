@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>Streamdeck_vJoy Settings</title>
+    <link rel="stylesheet" href="../sdpi.css">
+    <script src="../sdtools.common.js"></script>
+    <script src="ButtonToggle.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item" id="vJoyDeviceIdBlock">
+            <div class="sdpi-item-label">vJoy Device ID #</div>
+            <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyDeviceId" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="vJoyButtonIdBlock">
+            <div class="sdpi-item-label">vJoy Button Number #</div>
+            <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyButtonId" oninput="setSettings()">
+        </div>
+        <!--
+            Disabled due to a strange behaviour when using onPush. - States seem not to be correct
+        -->
+        <!--
+        <div type="radio" class="sdpi-item" id="buttonProcessing">
+            <div class="sdpi-item-label">Change vJoy button states on:</div>
+            <div class="sdpi-item-value ">
+                <span class="sdpi-item-child">
+                    <input id="buttonProcessingOnPush" class="sdProperty sdCheckbox" type="radio" value="onPush" name="buttonProcessing" oninput="setSettings();">
+                    <label for="buttonProcessingOnPush" class="sdpi-item-label"><span></span>On StreamDeck button push</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="buttonProcessingAfterReleased" class="sdProperty sdCheckbox" checked type="radio" value="afterReleased" name="buttonProcessing" oninput="setSettings();">
+                    <label for="buttonProcessingAfterReleased" class="sdpi-item-label"><span></span>After StreamDeck button released</label>
+                </span>
+            </div>
+        </div>-->
+        <hr />
+        <details class="message">
+            <summary>Streamdeck-vJoy <span class="linkspan" onclick="openWebsite('https://github.com/ashupp/Streamdeck-vJoy')">https://github.com/ashupp/Streamdeck-vJoy</span> </summary>
+        </details>
+    </div>
+</body>
+</html>
