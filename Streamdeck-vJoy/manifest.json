@@ -12,8 +12,8 @@
       ],
       "SupportedInMultiActions": true,
       "Tooltip": "Map stream deck buttons to vJoy buttons",
-      "UUID": "com.streamdeck.vjoy.vjoybutton",
-      "PropertyInspectorPath": "PropertyInspector/vJoyButton/vJoyButton.html"
+      "UUID": "com.streamdeck.vjoy.button",
+      "PropertyInspectorPath": "PropertyInspector/Button/Button.html"
     },
     {
       "Icon": "Images/icon",
@@ -46,7 +46,7 @@
   "Description": "Map deck buttons to vJoy buttons",
   "Icon": "Images/pluginIcon",
   "URL": "https://github.com/ashupp/Streamdeck-vJoy",
-  "Version": "0.0.1.6",
+  "Version": "0.0.2.0",
   "CodePath": "com.streamdeck.vjoy",
   "Category": "vJoy",
   "CategoryIcon": "Images/categoryIcon",

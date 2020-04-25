@@ -71,8 +71,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PluginActions\ButtonBase.cs" />
+    <Compile Include="PluginActions\ButtonBaseSettings.cs" />
+    <Compile Include="PluginActions\ButtonToggle.PluginSettings.cs" />
     <Compile Include="PluginActions\Button.cs" />
     <Compile Include="PluginActions\ButtonToggle.cs" />
+    <Compile Include="PluginActions\Button.PluginSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
