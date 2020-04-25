@@ -71,7 +71,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PluginActions\vJoyButton.cs" />
+    <Compile Include="PluginActions\Button.cs" />
     <Compile Include="PluginActions\ButtonToggle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -129,10 +129,10 @@
     <Content Include="PropertyInspector\elg_calendar_inv.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PropertyInspector\vJoyButton\vJoyButton.js">
+    <Content Include="PropertyInspector\Button\Button.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="PropertyInspector\vJoyButton\vJoyButton.html">
+    <Content Include="PropertyInspector\Button\Button.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="PropertyInspector\rcheck.svg">
