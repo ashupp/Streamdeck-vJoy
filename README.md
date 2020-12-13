@@ -2,7 +2,8 @@
 Map elgato stream deck buttons to vJoy buttons or axis.  
 I created this project to use my Stream Deck XL with Simracing games.
 
-**Download and install from release tab**  
+**Download and install from release page**
+https://github.com/ashupp/Streamdeck-vJoy/releases
 
 ![In action](Streamdeck-vJoy/doc/img/img1.jpg?raw=true|width=200)
 
