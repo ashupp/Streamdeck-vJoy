@@ -17,13 +17,9 @@
             <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyDeviceId" oninput="setSettings()">
         </div>
         <div class="sdpi-item" id="vJoyButtonIdBlock">
-            <div class="sdpi-item-label">vJoy Button Number #</div>
-            <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyButtonId" oninput="setSettings()">
+            <div class="sdpi-item-label">vJoy Button Number #'s</div>
+            <input class="sdpi-item-value sdProperty" placeholder="i.e 1 or 1,3" value="" id="vJoyButtonIds" oninput="setSettings()">
         </div>
-        <!--
-            Disabled due to a strange behaviour when using onPush. - States seem not to be correct
-        -->
-        <!--
         <div type="radio" class="sdpi-item" id="buttonProcessing">
             <div class="sdpi-item-label">Change vJoy button states on:</div>
             <div class="sdpi-item-value ">
@@ -36,7 +32,7 @@
                     <label for="buttonProcessingAfterReleased" class="sdpi-item-label"><span></span>After StreamDeck button released</label>
                 </span>
             </div>
-        </div>-->
+        </div>
         <hr />
         <details class="message">
             <summary>Streamdeck-vJoy <span class="linkspan" onclick="openWebsite('https://github.com/ashupp/Streamdeck-vJoy')">https://github.com/ashupp/Streamdeck-vJoy</span> </summary>

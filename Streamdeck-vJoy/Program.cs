@@ -11,8 +11,10 @@ namespace Streamdeck_vJoy
     {
         static void Main(string[] args)
         {
+#if DEBUG
             // Uncomment this line of code to allow for debugging
-            //while (!System.Diagnostics.Debugger.IsAttached) { System.Threading.Thread.Sleep(100); }
+            //System.Diagnostics.Debugger.Launch();
+#endif
 
             SDWrapper.Run(args);
         }
