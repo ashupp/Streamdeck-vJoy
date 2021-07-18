@@ -11,11 +11,15 @@ https://github.com/ashupp/Streamdeck-vJoy/releases
 
 At least one configured virtual Joystick with at least one Button and its ID.
 
-- vJoy - tested with version v2.1.9.1  
-https://github.com/jshafer817/vJoy/releases/tag/v2.1.9.1
+- vJoy - beginning with Streamdeck-vJoy 0.0.2.0 you need vJoy 2.2.1.1  
+https://github.com/njz3/vJoy/
 
 - Stream Deck for Windows  
 https://www.elgato.com/de/gaming/downloads
+
+Note:
+Streamddeck-vJoy releases prior to 0.0.2.0 were working only with vJoy version 2.1.9.1
+https://github.com/jshafer817/vJoy/releases/tag/v2.1.9.1
 
 
 ## Third party Libraries
