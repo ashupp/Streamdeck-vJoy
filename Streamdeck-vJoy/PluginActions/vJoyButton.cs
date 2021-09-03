@@ -257,6 +257,7 @@ namespace Streamdeck_vJoy
                     }
 
                     setAxisValue(axisValue, theAxis);
+                    axisValues[theAxis] = axisValue;
                 }
                 _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
             }
@@ -348,7 +349,7 @@ namespace Streamdeck_vJoy
                 else
                 {
                     // Es ist eine Achse
-                    var axisValue = 0;
+                    var axisValue = 0; 
                     HID_USAGES theAxis = getAxisNameByString(settings.vJoyElementType);
 
 

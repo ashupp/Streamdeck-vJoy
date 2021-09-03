@@ -10,20 +10,15 @@
 
         if (jsonObj.event === 'sendToPropertyInspector') {
             var payload = jsonObj.payload;
-            //showHideSettings(payload);
             checkShowHide();
         }
         else if (jsonObj.event === 'didReceiveSettings') {
             var payload = jsonObj.payload;
-            //showHideSettings(payload.settings);
             checkShowHide();
         }
     });
 });
 
-function showHideSettings(payload) {
-    console.log("Show Hide Settings Called", payload);
-}
 
 function checkShowHide() {
     elem = document.getElementById("vJoyElementType");
