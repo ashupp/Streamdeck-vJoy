@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Streamdeck_vJoy
 {
     [PluginActionId("com.streamdeck.vjoy.vjoybutton")]
-    public class vJoyButton : PluginBase
+    public class vJoyButton : KeypadBase
     {
         static private vJoyInterfaceWrap.vJoy _virtualJoystick = new vJoyInterfaceWrap.vJoy();
         static private bool _virtualJoystickAcquired = false;

@@ -2,6 +2,36 @@
   "Actions": [
     {
       "Icon": "Images/icon",
+      "Name": "vJoy Dial Axis",
+      "Controllers": [ "Encoder" ],
+      "Encoder": {
+        "layout": "$B1"
+      },
+      "States": [
+        {
+          "Image": "Images/icon"
+        }
+      ],
+      "UUID": "com.streamdeck.vjoy.vjoydialaxis",
+      "PropertyInspectorPath": "PropertyInspector/vJoyDialAxis/vJoyDialAxis.html"
+    },
+    {
+      "Icon": "Images/icon",
+      "Name": "vJoy Dial Buttons",
+      "Controllers": [ "Encoder" ],
+      "Encoder": {
+        "layout": "$B1"
+      },
+      "States": [
+        {
+          "Image": "Images/icon"
+        }
+      ],
+      "UUID": "com.streamdeck.vjoy.vjoydialbuttons",
+      "PropertyInspectorPath": "PropertyInspector/vJoyDialButtons/vJoyDialButtons.html"
+    },
+    {
+      "Icon": "Images/icon",
       "Name": "vJoy Button",
       "States": [
         {
@@ -46,7 +76,7 @@
   "Description": "Map deck buttons to vJoy buttons",
   "Icon": "Images/pluginIcon",
   "URL": "https://github.com/ashupp/Streamdeck-vJoy",
-  "Version": "0.0.2.1",
+  "Version": "0.0.2.2",
   "CodePath": "com.streamdeck.vjoy",
   "Category": "vJoy",
   "CategoryIcon": "Images/categoryIcon",
@@ -58,6 +88,6 @@
   ],
   "SDKVersion": 2,
   "Software": {
-    "MinimumVersion": "4.3"
+    "MinimumVersion": "6.6"
   }
 }

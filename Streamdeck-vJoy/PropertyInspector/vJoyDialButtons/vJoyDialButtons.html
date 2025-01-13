@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>Streamdeck_vJoy Dial Buttons Settings</title>
+    <link rel="stylesheet" href="../sdpi.css">
+    <script src="../sdtools.common.js"></script>
+    <script src="vJoyDialAxis.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item" id="vJoyDeviceIdBlock">
+            <div class="sdpi-item-label">vJoy Device ID #</div>
+            <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyDeviceId" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="vJoyButtonIdBlockClick">
+            <div class="sdpi-item-label">vJoy Button # (knob push)</div>
+            <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyButtonId" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="vJoyButtonIdBlockTurnLeft">
+            <div class="sdpi-item-label">vJoy Button # (on turn left)</div>
+            <input class="sdpi-item-value sdProperty" placeholder="i.e 2" value="" id="vJoyButtonIdTurnLeft" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="vJoyButtonIdBlockTurnRight">
+            <div class="sdpi-item-label">vJoy Button # (on turn right)</div>
+            <input class="sdpi-item-value sdProperty" placeholder="i.e 3" value="" id="vJoyButtonIdTurnRight" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="vJoyButtonIdBlockTouch">
+        <div class="sdpi-item-label">vJoy Button # (touchscreen)</div>
+        <input class="sdpi-item-value sdProperty" placeholder="i.e 4" value="" id="vJoyButtonIdTouch" oninput="setSettings()">
+    </div>
+        <hr>
+
+
+        <div type="radio" class="sdpi-item" id="buttonAction">
+            <div class="sdpi-item-label">Action processing (knob push)</div>
+            <div class="sdpi-item-value ">
+                <span class="sdpi-item-child">
+                    <input id="triggerPushAndRelease" class="sdProperty sdCheckbox" checked type="radio" value="pushAndRelease" name="buttonAction" oninput="setSettings()">
+                    <label for="triggerPushAndRelease" class="sdpi-item-label"><span></span>Push and Release</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="triggerPush" class="sdProperty sdCheckbox" type="radio" value="push" name="buttonAction" oninput="setSettings()">
+                    <label for="triggerPush" class="sdpi-item-label"><span></span>Push and hold</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="triggerRelease" class="sdProperty sdCheckbox" type="radio" value="release" name="buttonAction" oninput="setSettings()">
+                    <label for="triggerRelease" class="sdpi-item-label"><span></span>Release</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="triggerToggle" class="sdProperty sdCheckbox" type="radio" value="release" name="buttonAction" oninput="setSettings()">
+                    <label for="triggerToggle" class="sdpi-item-label"><span></span>Toggle</label>
+                </span>
+            </div>
+        </div>
+        <hr>
+        <div type="radio" class="sdpi-item" id="buttonActionTurnLeft">
+            <div class="sdpi-item-label">Action processing (turn left)</div>
+            <div class="sdpi-item-value ">
+                <span class="sdpi-item-child">
+                    <input id="triggerPushAndReleaseTurnLeft" class="sdProperty sdCheckbox" checked type="radio" value="pushAndRelease" name="buttonActionTurnLeft" oninput="checkShowHide(this); setSettings()">
+                    <label for="triggerPushAndReleaseTurnLeft" class="sdpi-item-label"><span></span>Push and Release</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="triggerPushTurnLeft" class="sdProperty sdCheckbox" type="radio" value="push" name="buttonActionTurnLeft" oninput="setSettings()">
+                    <label for="triggerPushTurnLeft" class="sdpi-item-label"><span></span>Push and hold</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="triggerReleaseTurnLeft" class="sdProperty sdCheckbox" type="radio" value="release" name="buttonActionTurnLeft" oninput="setSettings()">
+                    <label for="triggerReleaseTurnLeft" class="sdpi-item-label"><span></span>Release</label>
+                </span>
+            </div>
+        </div>
+        <hr>
+        <div type="radio" class="sdpi-item" id="buttonActionTurnRight">
+            <div class="sdpi-item-label">Action processing (turn right)</div>
+            <div class="sdpi-item-value ">
+                <span class="sdpi-item-child">
+                    <input id="triggerPushAndReleaseTurnRight" class="sdProperty sdCheckbox" checked type="radio" value="pushAndRelease" name="buttonActionTurnRight" oninput="checkShowHide(this); setSettings()">
+                    <label for="triggerPushAndReleaseTurnRight" class="sdpi-item-label"><span></span>Push and Release</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="triggerPushTurnRight" class="sdProperty sdCheckbox" type="radio" value="push" name="buttonActionTurnRight" oninput="setSettings()">
+                    <label for="triggerPushTurnRight" class="sdpi-item-label"><span></span>Push and hold</label>
+                </span>
+                <span class="sdpi-item-child">
+                    <input id="triggerReleaseTurnRight" class="sdProperty sdCheckbox" type="radio" value="release" name="buttonActionTurnRight" oninput="setSettings()">
+                    <label for="triggerReleaseTurnRight" class="sdpi-item-label"><span></span>Release</label>
+                </span>
+            </div>
+        </div>
+        <hr />
+        <div class="sdpi-item" id="vJoyButtonIdBlockDebounceLeftRight">
+            <div class="sdpi-item-label">Debounce duration (for Left/Right/Touchscreen Push and Release)</div>
+            <input class="sdpi-item-value sdProperty" placeholder="i.e 50" value="50" id="vJoyButtonDebounceLeftRight" oninput="setSettings()">
+        </div>
+        <hr />
+        <details class="message">
+            <summary>Streamdeck-vJoy <span class="linkspan" onclick="openWebsite('https://github.com/ashupp/Streamdeck-vJoy')">https://github.com/ashupp/Streamdeck-vJoy</span> </summary>
+        </details>
+    </div>
+</body>
+</html>

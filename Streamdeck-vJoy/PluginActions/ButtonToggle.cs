@@ -6,7 +6,7 @@ using System;
 namespace Streamdeck_vJoy.PluginActions
 {
     [PluginActionId("com.streamdeck.vjoy.buttontoggle")]
-    class ButtonToggle : PluginBase
+    class ButtonToggle : KeypadBase
     {
         #region Private Members
         private PluginSettings settings;
