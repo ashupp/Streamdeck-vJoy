@@ -3,6 +3,9 @@ Map elgato stream deck buttons to vJoy buttons or axis.
 I created this project to use my Stream Deck with Simracing games.  
 It turned out this is also very useful for Flight Simulation titles and even Farming simulator.
 
+> [!IMPORTANT]
+> Now supports Stream Deck+ with its Dials
+
 **Download and install from release page**  
 https://github.com/ashupp/Streamdeck-vJoy/releases
 
@@ -13,7 +16,9 @@ https://github.com/ashupp/Streamdeck-vJoy/releases
 At least one configured virtual Joystick with at least one Button and its ID.
 
 - vJoy - beginning with Streamdeck-vJoy 0.0.2.0 you need vJoy 2.2.1.1  
-https://github.com/njz3/vJoy/
+https://github.com/njz3/vJoy/  
+If virtual joysticks are not being created on Win11. Try Brunner version:  
+https://github.com/BrunnerInnovation/vJoy
 
 - Stream Deck for Windows  
 https://www.elgato.com/de/gaming/downloads
