@@ -20,18 +20,34 @@
             <div class="sdpi-item-label">vJoy Button # (knob push)</div>
             <input class="sdpi-item-value sdProperty" placeholder="i.e 1" value="" id="vJoyButtonId" oninput="setSettings()">
         </div>
+        <div class="sdpi-item" id="vJoyButtonNameBlock">
+            <div class="sdpi-item-label">Button name (knob push)</div>
+            <input class="sdpi-item-value sdProperty" placeholder="optional, e.g. Gear" value="" id="vJoyButtonName" oninput="setSettings()">
+        </div>
         <div class="sdpi-item" id="vJoyButtonIdBlockTurnLeft">
             <div class="sdpi-item-label">vJoy Button # (on turn left)</div>
             <input class="sdpi-item-value sdProperty" placeholder="i.e 2" value="" id="vJoyButtonIdTurnLeft" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="vJoyButtonNameTurnLeftBlock">
+            <div class="sdpi-item-label">Button name (on turn left)</div>
+            <input class="sdpi-item-value sdProperty" placeholder="optional, e.g. Gear" value="" id="vJoyButtonNameTurnLeft" oninput="setSettings()">
         </div>
         <div class="sdpi-item" id="vJoyButtonIdBlockTurnRight">
             <div class="sdpi-item-label">vJoy Button # (on turn right)</div>
             <input class="sdpi-item-value sdProperty" placeholder="i.e 3" value="" id="vJoyButtonIdTurnRight" oninput="setSettings()">
         </div>
+        <div class="sdpi-item" id="vJoyButtonNameTurnRightBlock">
+            <div class="sdpi-item-label">Button name (on turn right)</div>
+            <input class="sdpi-item-value sdProperty" placeholder="optional, e.g. Gear" value="" id="vJoyButtonNameTurnRight" oninput="setSettings()">
+        </div>
         <div class="sdpi-item" id="vJoyButtonIdBlockTouch">
         <div class="sdpi-item-label">vJoy Button # (touchscreen)</div>
         <input class="sdpi-item-value sdProperty" placeholder="i.e 4" value="" id="vJoyButtonIdTouch" oninput="setSettings()">
     </div>
+        <div class="sdpi-item" id="vJoyButtonNameTouchBlock">
+            <div class="sdpi-item-label">Button name (touchscreen)</div>
+            <input class="sdpi-item-value sdProperty" placeholder="optional, e.g. Gear" value="" id="vJoyButtonNameTouch" oninput="setSettings()">
+        </div>
         <hr>
 
 
@@ -96,6 +112,24 @@
         <div class="sdpi-item" id="vJoyButtonIdBlockDebounceLeftRight">
             <div class="sdpi-item-label">Debounce duration (for Left/Right/Touchscreen Push and Release)</div>
             <input class="sdpi-item-value sdProperty" placeholder="i.e 50" value="50" id="vJoyButtonDebounceLeftRight" oninput="setSettings()">
+        </div>
+        <hr />
+        <div type="checkbox" class="sdpi-item" id="showStateOnDisplayBlock">
+            <div class="sdpi-item-label">Dial display</div>
+            <div class="sdpi-item-value">
+                <div class="sdpi-item-child">
+                    <input id="showStateOnDisplay" type="checkbox" value="true" class="sdProperty sdCheckbox" oninput="setSettings()">
+                    <label for="showStateOnDisplay" class="sdpi-item-label"><span></span>Show vJoy state on display</label>
+                </div>
+            </div>
+        </div>
+        <div class="sdpi-item" id="displayTextOnBlock">
+            <div class="sdpi-item-label">Text when pressed</div>
+            <input class="sdpi-item-value sdProperty" placeholder="e.g. {name} ON  -  vars: {id}, {name}" value="" id="displayTextOn" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="displayTextOffBlock">
+            <div class="sdpi-item-label">Text when released</div>
+            <input class="sdpi-item-value sdProperty" placeholder="e.g. {name} OFF  -  vars: {id}, {name}" value="" id="displayTextOff" oninput="setSettings()">
         </div>
         <hr />
         <details class="message">

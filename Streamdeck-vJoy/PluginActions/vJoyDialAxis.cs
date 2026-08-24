@@ -72,6 +72,11 @@ namespace Streamdeck_vJoy
                 instance.resetStepDown = "";
                 instance.resetDoNothing = false;
 
+                instance.showStateOnDisplay = false;
+                instance.showValueAsPercent = false;
+                instance.displayScaleMin = "";
+                instance.displayScaleMax = "";
+
                 return instance;
             }
 
@@ -209,6 +214,19 @@ namespace Streamdeck_vJoy
             [JsonProperty(PropertyName = "setStepDown")]
             public string setStepDown { get; set; }
 
+            /* Display */
+            [JsonProperty(PropertyName = "showStateOnDisplay")]
+            public bool showStateOnDisplay { get; set; }
+
+            [JsonProperty(PropertyName = "showValueAsPercent")]
+            public bool showValueAsPercent { get; set; }
+
+            [JsonProperty(PropertyName = "displayScaleMin")]
+            public string displayScaleMin { get; set; }
+
+            [JsonProperty(PropertyName = "displayScaleMax")]
+            public string displayScaleMax { get; set; }
+
         }
 
         #region Private Members
@@ -283,7 +301,84 @@ namespace Streamdeck_vJoy
         {
             _virtualJoystick.SetAxis(axValue, Convert.ToUInt32(settings.vJoyDeviceId), axis);
         }
-        
+
+        private void UpdateAxisDisplay(int axisValue, HID_USAGES axis)
+        {
+            if (!settings.showStateOnDisplay)
+                return;
+
+            int minValue = GetJoystickAxisMinValue(axis);
+            int maxValue = GetJoystickAxisMaxValue(axis);
+            int indicatorPercentage = 0;
+            if (maxValue > minValue)
+            {
+                indicatorPercentage = (int)Math.Round((axisValue - minValue) * 100.0 / (maxValue - minValue));
+            }
+            if (indicatorPercentage < 0) indicatorPercentage = 0;
+            if (indicatorPercentage > 100) indicatorPercentage = 100;
+
+            string valueText;
+            if (settings.showValueAsPercent)
+            {
+                valueText = indicatorPercentage + "%";
+            }
+            else
+            {
+                // Optionally map the axis range onto a custom display scale (e.g. 1-100)
+                double displayValue = axisValue;
+                if (maxValue > minValue && TryGetDisplayScale(out double scaleMin, out double scaleMax))
+                {
+                    displayValue = scaleMin + (axisValue - minValue) * (scaleMax - scaleMin) / (maxValue - minValue);
+                }
+
+                // Non-percent values are always rounded to whole numbers
+                valueText = Math.Round(displayValue, MidpointRounding.AwayFromZero).ToString("0", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            _ = _connection.SetFeedbackAsync(new Dictionary<string, string>
+            {
+                { "value", valueText },
+                { "indicator", indicatorPercentage.ToString() }
+            });
+        }
+
+        private bool TryGetDisplayScale(out double scaleMin, out double scaleMax)
+        {
+            scaleMin = 0;
+            scaleMax = 0;
+
+            if (String.IsNullOrEmpty(settings.displayScaleMin) || String.IsNullOrEmpty(settings.displayScaleMax))
+                return false;
+
+            // Accept both decimal comma and decimal point
+            var style = System.Globalization.NumberStyles.Float;
+            var culture = System.Globalization.CultureInfo.InvariantCulture;
+            return double.TryParse(settings.displayScaleMin.Trim().Replace(",", "."), style, culture, out scaleMin)
+                && double.TryParse(settings.displayScaleMax.Trim().Replace(",", "."), style, culture, out scaleMax)
+                && scaleMin != scaleMax;
+        }
+
+        private void UpdateButtonDisplay(bool pressed)
+        {
+            if (!settings.showStateOnDisplay)
+                return;
+
+            _ = _connection.SetFeedbackAsync(new Dictionary<string, string>
+            {
+                { "value", "B" + settings.vJoyButtonId + (pressed ? " ON" : " OFF") },
+                { "indicator", pressed ? "100" : "0" }
+            });
+        }
+
+        private void ClearDisplay()
+        {
+            _ = _connection.SetFeedbackAsync(new Dictionary<string, string>
+            {
+                { "value", "" },
+                { "indicator", "0" }
+            });
+        }
+
 
         private int stepDownAxisValue(HID_USAGES theAxis, string stepValue)
         {
@@ -425,7 +520,8 @@ namespace Streamdeck_vJoy
                 setAxisValue(axisValue, theAxis);
                 axisValues[theAxis] = axisValue;
                 _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
-            
+                UpdateAxisDisplay(axisValue, theAxis);
+
         }
 
 
@@ -447,12 +543,14 @@ namespace Streamdeck_vJoy
             {
                 // Es ist ein Button
                 _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
+                UpdateButtonDisplay(true);
 
                 if (autoreset)
                 {
                     await Task.Delay(60).ContinueWith(_ =>
                     {
                         _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
+                        UpdateButtonDisplay(false);
                     });
                 }
             }
@@ -490,6 +588,7 @@ namespace Streamdeck_vJoy
 
                 setAxisValue(axisValue, theAxis);
                 axisValues[theAxis] = axisValue;
+                UpdateAxisDisplay(axisValue, theAxis);
             }
             _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
         }
@@ -507,6 +606,7 @@ namespace Streamdeck_vJoy
             {
                 // Es ist ein Button
                 _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
+                UpdateButtonDisplay(false);
             }
             else
             {
@@ -541,6 +641,8 @@ namespace Streamdeck_vJoy
                 }
 
                 setAxisValue(axisValue, theAxis);
+                axisValues[theAxis] = axisValue;
+                UpdateAxisDisplay(axisValue, theAxis);
             }
             _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
         }
@@ -554,6 +656,12 @@ namespace Streamdeck_vJoy
         {
             Tools.AutoPopulateSettings(settings, payload.Settings);
             SaveSettings();
+
+            // Restore the default display when the state display gets disabled
+            if (!settings.showStateOnDisplay)
+            {
+                ClearDisplay();
+            }
         }
 
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload)

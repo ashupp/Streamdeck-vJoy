@@ -29,6 +29,10 @@ namespace Streamdeck_vJoy
                 instance.vJoyButtonIdTurnLeft = "";
                 instance.vJoyButtonIdTurnRight = "";
                 instance.vJoyButtonIdTouch = "";
+                instance.vJoyButtonName = "";
+                instance.vJoyButtonNameTurnLeft = "";
+                instance.vJoyButtonNameTurnRight = "";
+                instance.vJoyButtonNameTouch = "";
                 instance.vJoyElementType = "btn";
                 instance.vJoyButtonDebounceLeftRight = "50";
                 instance.chkResetAxisToCenterAfterButtonRelease = String.Empty;
@@ -70,6 +74,10 @@ namespace Streamdeck_vJoy
                 instance.triggerPushTurnRight = false;
                 instance.triggerReleaseTurnRight = false;
 
+                instance.showStateOnDisplay = false;
+                instance.displayTextOn = "";
+                instance.displayTextOff = "";
+
                 return instance;
             }
 
@@ -91,6 +99,18 @@ namespace Streamdeck_vJoy
             
             [JsonProperty(PropertyName = "vJoyButtonIdTouch")]
             public string vJoyButtonIdTouch { get; set; }
+
+            [JsonProperty(PropertyName = "vJoyButtonName")]
+            public string vJoyButtonName { get; set; }
+
+            [JsonProperty(PropertyName = "vJoyButtonNameTurnLeft")]
+            public string vJoyButtonNameTurnLeft { get; set; }
+
+            [JsonProperty(PropertyName = "vJoyButtonNameTurnRight")]
+            public string vJoyButtonNameTurnRight { get; set; }
+
+            [JsonProperty(PropertyName = "vJoyButtonNameTouch")]
+            public string vJoyButtonNameTouch { get; set; }
 
             [JsonProperty(PropertyName = "vJoyElementType")]
             public string vJoyElementType { get; set; }
@@ -185,6 +205,16 @@ namespace Streamdeck_vJoy
             [JsonProperty(PropertyName = "triggerReleaseTurnRight")]
             public bool triggerReleaseTurnRight { get; set; }
 
+            /* Display */
+            [JsonProperty(PropertyName = "showStateOnDisplay")]
+            public bool showStateOnDisplay { get; set; }
+
+            [JsonProperty(PropertyName = "displayTextOn")]
+            public string displayTextOn { get; set; }
+
+            [JsonProperty(PropertyName = "displayTextOff")]
+            public string displayTextOff { get; set; }
+
         }
 
         #region Private Members
@@ -212,6 +242,40 @@ namespace Streamdeck_vJoy
         {
         }
 
+        private string GetButtonStateText(uint buttonId, string buttonName, bool pressed)
+        {
+            string name = String.IsNullOrEmpty(buttonName) ? "B" + buttonId : buttonName;
+
+            string customText = pressed ? settings.displayTextOn : settings.displayTextOff;
+            if (!String.IsNullOrEmpty(customText))
+            {
+                // {id} = vJoy button id, {name} = configured button name (falls back to B<id>)
+                return customText.Replace("{id}", buttonId.ToString()).Replace("{name}", name);
+            }
+            return name + (pressed ? " ON" : " OFF");
+        }
+
+        private void UpdateButtonDisplay(uint buttonId, string buttonName, bool pressed)
+        {
+            if (!settings.showStateOnDisplay)
+                return;
+
+            _ = _connection.SetFeedbackAsync(new Dictionary<string, string>
+            {
+                { "value", GetButtonStateText(buttonId, buttonName, pressed) },
+                { "indicator", pressed ? "100" : "0" }
+            });
+        }
+
+        private void ClearDisplay()
+        {
+            _ = _connection.SetFeedbackAsync(new Dictionary<string, string>
+            {
+                { "value", "" },
+                { "indicator", "0" }
+            });
+        }
+
         public override void Dispose()
         {
             if (_virtualJoystickAcquired)
@@ -233,20 +297,24 @@ namespace Streamdeck_vJoy
                 if (settings.triggerPushAndReleaseTurnRight)
                 {
                     _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonIdTurnRight));
+                    UpdateButtonDisplay(Convert.ToUInt32(settings.vJoyButtonIdTurnRight), settings.vJoyButtonNameTurnRight, true);
                     await Task.Delay(Convert.ToInt32(this.settings.vJoyButtonDebounceLeftRight)).ContinueWith(_ =>
                     {
                         _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonIdTurnRight));
+                        UpdateButtonDisplay(Convert.ToUInt32(settings.vJoyButtonIdTurnRight), settings.vJoyButtonNameTurnRight, false);
                     });
                 }
 
                 if (settings.triggerPushTurnRight)
                 {
                     _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonIdTurnRight));
+                    UpdateButtonDisplay(Convert.ToUInt32(settings.vJoyButtonIdTurnRight), settings.vJoyButtonNameTurnRight, true);
                 }
 
                 if (settings.triggerReleaseTurnRight)
                 {
                     _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonIdTurnRight));
+                    UpdateButtonDisplay(Convert.ToUInt32(settings.vJoyButtonIdTurnRight), settings.vJoyButtonNameTurnRight, false);
                 }
                 
             }
@@ -256,20 +324,24 @@ namespace Streamdeck_vJoy
                 if (settings.triggerPushAndReleaseTurnLeft)
                 {
                     _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonIdTurnLeft));
+                    UpdateButtonDisplay(Convert.ToUInt32(settings.vJoyButtonIdTurnLeft), settings.vJoyButtonNameTurnLeft, true);
                     await Task.Delay(Convert.ToInt32(this.settings.vJoyButtonDebounceLeftRight)).ContinueWith(_ =>
                     {
                         _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonIdTurnLeft));
+                        UpdateButtonDisplay(Convert.ToUInt32(settings.vJoyButtonIdTurnLeft), settings.vJoyButtonNameTurnLeft, false);
                     });
                 }
 
                 if (settings.triggerPushTurnLeft)
                 {
                     _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonIdTurnLeft));
+                    UpdateButtonDisplay(Convert.ToUInt32(settings.vJoyButtonIdTurnLeft), settings.vJoyButtonNameTurnLeft, true);
                 }
 
                 if (settings.triggerReleaseTurnLeft)
                 {
                     _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonIdTurnLeft));
+                    UpdateButtonDisplay(Convert.ToUInt32(settings.vJoyButtonIdTurnLeft), settings.vJoyButtonNameTurnLeft, false);
                 }
             }
 
@@ -295,9 +367,11 @@ namespace Streamdeck_vJoy
                 }
 
                 var buttonId = Convert.ToUInt32(settings.vJoyButtonId);
+                var buttonName = settings.vJoyButtonName;
                 if(touchscreen)
                 {
                     buttonId = Convert.ToUInt32(settings.vJoyButtonIdTouch);
+                    buttonName = settings.vJoyButtonNameTouch;
                 };
 
                 
@@ -306,20 +380,14 @@ namespace Streamdeck_vJoy
                     // Es ist ein Button
                     _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), buttonId);
                     _currentToggleStatus = false;
+                    UpdateButtonDisplay(buttonId, buttonName, false);
 
                 }
                 else
                 {
                     // Es ist ein Button
-                    if (touchscreen)
-                    {
-                        _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), buttonId);
-                    }
-                    else
-                    {
-                        _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), buttonId);
-                    }
                     _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), buttonId);
+                    UpdateButtonDisplay(buttonId, buttonName, true);
                     if (!_currentToggleStatus && settings.triggerToggle)
                     {
                         _currentToggleStatus = true;
@@ -332,6 +400,7 @@ namespace Streamdeck_vJoy
                     await Task.Delay(Convert.ToInt32(this.settings.vJoyButtonDebounceLeftRight)).ContinueWith(_ =>
                     {
                         _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), buttonId);
+                        UpdateButtonDisplay(buttonId, buttonName, false);
                     });
                 }
                 
@@ -351,6 +420,7 @@ namespace Streamdeck_vJoy
                 }
 
                 _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
+                UpdateButtonDisplay(Convert.ToUInt32(settings.vJoyButtonId), settings.vJoyButtonName, false);
                 _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
             }
         }
@@ -364,6 +434,12 @@ namespace Streamdeck_vJoy
         {
             Tools.AutoPopulateSettings(settings, payload.Settings);
             SaveSettings();
+
+            // Restore the default display when the state display gets disabled
+            if (!settings.showStateOnDisplay)
+            {
+                ClearDisplay();
+            }
         }
 
         public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload)

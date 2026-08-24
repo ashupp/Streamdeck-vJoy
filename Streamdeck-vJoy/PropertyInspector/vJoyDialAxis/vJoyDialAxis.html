@@ -221,6 +221,32 @@
             <input class="sdpi-item-value sdProperty" placeholder="i.e 50" value="50" id="vJoyButtonDebounceLeftRight" oninput="setSettings()">
         </div>
         <hr />
+        <div type="checkbox" class="sdpi-item" id="showStateOnDisplayBlock">
+            <div class="sdpi-item-label">Dial display</div>
+            <div class="sdpi-item-value">
+                <div class="sdpi-item-child">
+                    <input id="showStateOnDisplay" type="checkbox" value="true" class="sdProperty sdCheckbox" oninput="setSettings()">
+                    <label for="showStateOnDisplay" class="sdpi-item-label"><span></span>Show vJoy state on display</label>
+                </div>
+            </div>
+        </div>
+        <div type="checkbox" class="sdpi-item" id="showValueAsPercentBlock">
+            <div class="sdpi-item-label"></div>
+            <div class="sdpi-item-value">
+                <div class="sdpi-item-child">
+                    <input id="showValueAsPercent" type="checkbox" value="true" class="sdProperty sdCheckbox" oninput="setSettings()">
+                    <label for="showValueAsPercent" class="sdpi-item-label"><span></span>Show value as percent</label>
+                </div>
+            </div>
+        </div>
+        <div class="sdpi-item" id="displayScaleBlock">
+            <div class="sdpi-item-label">Display scale (min / max)</div>
+            <div class="sdpi-item-value" style="display:flex; gap:4px;">
+                <input class="sdpi-item-value sdProperty" placeholder="e.g. 1" value="" id="displayScaleMin" oninput="setSettings()">
+                <input class="sdpi-item-value sdProperty" placeholder="e.g. 100" value="" id="displayScaleMax" oninput="setSettings()">
+            </div>
+        </div>
+        <hr />
         <details class="message">
             <summary>Streamdeck-vJoy <span class="linkspan" onclick="openWebsite('https://github.com/ashupp/Streamdeck-vJoy')">https://github.com/ashupp/Streamdeck-vJoy</span> </summary>
         </details>
