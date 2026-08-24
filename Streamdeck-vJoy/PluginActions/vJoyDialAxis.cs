@@ -72,11 +72,6 @@ namespace Streamdeck_vJoy
                 instance.resetStepDown = "";
                 instance.resetDoNothing = false;
 
-
-                instance.triggerPushAndRelease = true;
-                instance.triggerPush = true;
-                instance.triggerRelease = true;
-
                 return instance;
             }
 
@@ -213,17 +208,6 @@ namespace Streamdeck_vJoy
 
             [JsonProperty(PropertyName = "setStepDown")]
             public string setStepDown { get; set; }
-
-
-            /* basic action handling */ 
-            [JsonProperty(PropertyName = "triggerPushAndRelease")]
-            public bool triggerPushAndRelease { get; set; }
-
-            [JsonProperty(PropertyName = "triggerPush")]
-            public bool triggerPush { get; set; }
-
-            [JsonProperty(PropertyName = "triggerRelease")]
-            public bool triggerRelease { get; set; }
 
         }
 
@@ -366,64 +350,6 @@ namespace Streamdeck_vJoy
 
             return namedAxis;
         }
-        /*
-        public override void KeyReleased(KeyPayload payload)
-        {
-            if (settings.resetDoNothing)
-                return;
-            if (settings.triggerPushAndRelease || settings.triggerRelease)
-            {
-                if (_virtualJoystick == null || !_virtualJoystickAcquired)
-                {
-                    _virtualJoystick.AcquireVJD(Convert.ToUInt32(settings.vJoyDeviceId));
-                }
-                if (settings.vJoyElementType == "btn")
-                {
-                    // Es ist ein Button
-                    _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
-                }
-                else
-                {
-                    // Es ist eine Achse
-                    var axisValue = 0;
-                    HID_USAGES theAxis = getAxisNameByString(settings.vJoyElementType);
-
-
-                    if (settings.resetToMin)
-                    {
-                        axisValue = GetJoystickAxisMinValue(theAxis);
-                    }
-                    else if (settings.resetToMax)
-                    {
-                        axisValue = GetJoystickAxisMaxValue(theAxis);
-                    }
-                    else if (settings.resetToCenter)
-                    {
-                        axisValue = GetJoystickAxisCenter(theAxis);
-                    }
-                    else if (settings.resetToCustom)
-                    {
-                        axisValue = Convert.ToInt32(settings.resetToCustomValue);
-                    }
-                    else if (settings.resetToStepUp)
-                    {
-                        axisValue = stepUpAxisValue(theAxis, settings.resetStepUp);
-                    }
-                    else if (settings.resetToStepDown)
-                    {
-                        axisValue = stepDownAxisValue(theAxis, settings.resetStepDown);
-                    }
-
-                    setAxisValue(axisValue, theAxis);
-                }
-                _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
-
-
-
-            }
-        }
-        */
-
         public override void OnTick()
         {
         }
@@ -511,120 +437,112 @@ namespace Streamdeck_vJoy
 
         private async Task ButtonPressAsync(bool autoreset = false)
         {
-            if (settings.triggerPush || settings.triggerPushAndRelease)
+            if (_virtualJoystick == null || !_virtualJoystickAcquired)
             {
-                if (_virtualJoystick == null || !_virtualJoystickAcquired)
-                {
-                    _virtualJoystick.AcquireVJD(Convert.ToUInt32(settings.vJoyDeviceId));
-                }
-
-
-                if (settings.vJoyElementType == "btn")
-                {
-                    // Es ist ein Button
-                    _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
-
-                    if (autoreset)
-                    {
-                        await Task.Delay(60).ContinueWith(_ =>
-                        {
-                            _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
-                        });
-                    }
-                }
-                else
-                {
-                    // Es ist eine Achse
-                    var axisValue = 0;
-                    HID_USAGES theAxis = getAxisNameByString(settings.vJoyElementType);
-
-
-                    if (settings.setToMin)
-                    {
-                        axisValue = GetJoystickAxisMinValue(theAxis);
-                    }
-                    else if (settings.setToMax)
-                    {
-                        axisValue = GetJoystickAxisMaxValue(theAxis);
-                    }
-                    else if (settings.setToCenter)
-                    {
-                        axisValue = GetJoystickAxisCenter(theAxis);
-                    }
-                    else if (settings.setToCustom)
-                    {
-                        axisValue = Convert.ToInt32(settings.setToCustomValue);
-                    }
-                    else if (settings.setToStepUp)
-                    {
-                        axisValue = stepUpAxisValue(theAxis, settings.setStepUp);
-                    }
-                    else if (settings.setToStepDown)
-                    {
-                        axisValue = stepDownAxisValue(theAxis, settings.setStepDown);
-                    }
-
-                    setAxisValue(axisValue, theAxis);
-                    axisValues[theAxis] = axisValue;
-                }
-                _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
+                _virtualJoystick.AcquireVJD(Convert.ToUInt32(settings.vJoyDeviceId));
             }
+
+
+            if (settings.vJoyElementType == "btn")
+            {
+                // Es ist ein Button
+                _virtualJoystick.SetBtn(true, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
+
+                if (autoreset)
+                {
+                    await Task.Delay(60).ContinueWith(_ =>
+                    {
+                        _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
+                    });
+                }
+            }
+            else
+            {
+                // Es ist eine Achse
+                var axisValue = 0;
+                HID_USAGES theAxis = getAxisNameByString(settings.vJoyElementType);
+
+
+                if (settings.setToMin)
+                {
+                    axisValue = GetJoystickAxisMinValue(theAxis);
+                }
+                else if (settings.setToMax)
+                {
+                    axisValue = GetJoystickAxisMaxValue(theAxis);
+                }
+                else if (settings.setToCenter)
+                {
+                    axisValue = GetJoystickAxisCenter(theAxis);
+                }
+                else if (settings.setToCustom)
+                {
+                    axisValue = Convert.ToInt32(settings.setToCustomValue);
+                }
+                else if (settings.setToStepUp)
+                {
+                    axisValue = stepUpAxisValue(theAxis, settings.setStepUp);
+                }
+                else if (settings.setToStepDown)
+                {
+                    axisValue = stepDownAxisValue(theAxis, settings.setStepDown);
+                }
+
+                setAxisValue(axisValue, theAxis);
+                axisValues[theAxis] = axisValue;
+            }
+            _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
         }
 
         public override void DialUp(DialPayload payload)
         {
             if (settings.resetDoNothing)
                 return;
-            if (settings.triggerPushAndRelease || settings.triggerRelease)
+
+            if (_virtualJoystick == null || !_virtualJoystickAcquired)
             {
-                if (_virtualJoystick == null || !_virtualJoystickAcquired)
-                {
-                    _virtualJoystick.AcquireVJD(Convert.ToUInt32(settings.vJoyDeviceId));
-                }
-                if (settings.vJoyElementType == "btn")
-                {
-                    // Es ist ein Button
-                    _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
-                }
-                else
-                {
-                    // Es ist eine Achse
-                    var axisValue = 0;
-                    HID_USAGES theAxis = getAxisNameByString(settings.vJoyElementType);
-
-
-                    if (settings.resetToMin)
-                    {
-                        axisValue = GetJoystickAxisMinValue(theAxis);
-                    }
-                    else if (settings.resetToMax)
-                    {
-                        axisValue = GetJoystickAxisMaxValue(theAxis);
-                    }
-                    else if (settings.resetToCenter)
-                    {
-                        axisValue = GetJoystickAxisCenter(theAxis);
-                    }
-                    else if (settings.resetToCustom)
-                    {
-                        axisValue = Convert.ToInt32(settings.resetToCustomValue);
-                    }
-                    else if (settings.resetToStepUp)
-                    {
-                        axisValue = stepUpAxisValue(theAxis, settings.resetStepUp);
-                    }
-                    else if (settings.resetToStepDown)
-                    {
-                        axisValue = stepDownAxisValue(theAxis, settings.resetStepDown);
-                    }
-
-                    setAxisValue(axisValue, theAxis);
-                }
-                _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
-
-
-
+                _virtualJoystick.AcquireVJD(Convert.ToUInt32(settings.vJoyDeviceId));
             }
+            if (settings.vJoyElementType == "btn")
+            {
+                // Es ist ein Button
+                _virtualJoystick.SetBtn(false, Convert.ToUInt32(settings.vJoyDeviceId), Convert.ToUInt32(settings.vJoyButtonId));
+            }
+            else
+            {
+                // Es ist eine Achse
+                var axisValue = 0;
+                HID_USAGES theAxis = getAxisNameByString(settings.vJoyElementType);
+
+
+                if (settings.resetToMin)
+                {
+                    axisValue = GetJoystickAxisMinValue(theAxis);
+                }
+                else if (settings.resetToMax)
+                {
+                    axisValue = GetJoystickAxisMaxValue(theAxis);
+                }
+                else if (settings.resetToCenter)
+                {
+                    axisValue = GetJoystickAxisCenter(theAxis);
+                }
+                else if (settings.resetToCustom)
+                {
+                    axisValue = Convert.ToInt32(settings.resetToCustomValue);
+                }
+                else if (settings.resetToStepUp)
+                {
+                    axisValue = stepUpAxisValue(theAxis, settings.resetStepUp);
+                }
+                else if (settings.resetToStepDown)
+                {
+                    axisValue = stepDownAxisValue(theAxis, settings.resetStepDown);
+                }
+
+                setAxisValue(axisValue, theAxis);
+            }
+            _virtualJoystick?.RelinquishVJD(Convert.ToUInt32(settings.vJoyDeviceId));
         }
 
         public override void TouchPress(TouchpadPressPayload payload)
