@@ -3,11 +3,21 @@ Map elgato stream deck buttons to vJoy buttons or axis.
 I created this project to use my Stream Deck with Simracing games.  
 It turned out this is also very useful for Flight Simulation titles and even Farming simulator.
 
-> [!IMPORTANT]
-> Now supports Stream Deck+ with its Dials
+## 🎛️ What's new in v0.0.2.4
+
+**Live vJoy state on the Stream Deck+ dial displays** — plus fixed dial push, release & touch events.
+
+- ✅ Axis value & indicator bar, updated live while you turn
+- ✅ Percent view or a custom display scale (e.g. 1–100)
+- ✅ Button names & custom texts with `{id}` / `{name}` variables
+- ✅ Optional per action - off by default, nothing changes
+
+🐛 **Fixed:** knob push / release and touchscreen tap did nothing in the Dial Axis action  
+  
+## Download
 
 **Download and install from release page**  
-https://github.com/ashupp/Streamdeck-vJoy/releases
+https://github.com/ashupp/Streamdeck-vJoy/releases 
 
 ![In action](Streamdeck-vJoy/doc/img/img1.jpg?raw=true|width=200)
 
